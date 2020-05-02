@@ -1,0 +1,13 @@
+name: probability
+channels:
+- conda-forge
+dependencies:
+- python=3.8
+- conda
+- scipy
+- numpy
+- matplotlib
+- seaborn
+- pip
+- pip:
+  - streamlit
