@@ -95,14 +95,16 @@ st.pyplot(fig)
 """### Probability density function (and its logarithmic transform)
 
 The Normal distribution has a probability density function.
-The area under the probability density function sums to one,
+That's the blue curve you see in the plot.
+By definition,
+the area under the probability density function sums to one,
 and so for a continuous distribution like the Gaussian,
 "probability" is strictly defined _only_ for ranges.
 
 Go ahead and calculate the total probability
 for a range of x-values.
 In particular, see how changing the width
-changes the total probability of the data.
+changes the total probability of the x-values.
 """
 
 lower_quartile, upper_quartile = gaussian.dist.ppf([0.25, 0.75])
@@ -129,13 +131,21 @@ Turns out, one other thing you can do with probability distributions
 is to draw numbers from them.
 Yes, they are random number generators!
 (More generally, they are also called "generative models" of data.)
+We can generate a sequence of draws
+all we have to do is call on the `.draw()` method:
+
+```python
+xs = distribution.draw(1000)
+```
+
+If you study the implementation above,
+underneath the hood, we simply wrap SciPy's distributions library for convenience.
 
 Go ahead and request for a number of "draws" from your Gaussian!
 """)
 
 num_draws = st.number_input("Number of draws", min_value=0, max_value=2000, value=0, step=20)
 draws = gaussian.draw(num_draws)
-
 
 fig3, ax3, minval, maxval = plot_gaussian(gaussian)
 ax3.vlines(x=draws, ymin=0, ymax=gaussian.pdf(draws), alpha=0.1)
@@ -155,7 +165,23 @@ being drawn in that region.
 st.markdown("""
 ## Inferring parameter values given data.
 
-Let's play a game.
+Previously, you saw "probability" as the area under the curve.
+"Likelihood", however, is the _height_ of the curve.
+We can calculate the likelihood of a single data point
+by taking its value on the x-axis and drawing a line up to the height of the curve.
+The total likelihood of multiple data points
+is the product of all of their likelihoods.
+That said, the numbers can get small really quickly on a computer,
+so to prevent underflow, we typically take the sum of log likelihoods
+rather than the product of likelihoods.
+
+Using our distribution object above, it literally is nothing more than calling:
+
+```python
+distribution.logpdf(xs).sum()
+```
+
+Let's play a game around this point.
 
 I've got data for you, in the form of "draws" from a Gaussian.
 However, I'm not telling you what the configuration of that Gaussian is.
@@ -181,6 +207,7 @@ ax4.plot(xs, ys)
 likelihoods = gaussian.pdf(data)
 loglikes = gaussian.logpdf(data)
 ax4.vlines(x=data, ymin=0, ymax=likelihoods)
+ax4.scatter(x=data, y=likelihoods, color="red", marker="o")
 ax4.set_ylim(0, max(ys) * 2)
 ax4.set_title(f"Total log-likelihood: {loglikes.sum():.3f}")
 
@@ -190,7 +217,8 @@ st.markdown(
 """
 If you tried to maximize the log likelihood,
 then you were attempting "maximum likelihood estimation"!
-It's quite a natural thing to do.
+This is a natural way of approaching estimation of parameters
+given data.
 """)
 
 st.markdown(
@@ -199,5 +227,43 @@ st.markdown(
 
 As I wrote above, I have adopted Bayesian methods in my day-to-day work at NIBR.
 Everything shown in this app has a natural extension to Bayesian methods.
+If you're curious how Bayesian methods work computationally,
+check out [this essay that I wrote][compbayes].
+
+[compbayes]: https://ericmjl.github.io/essays-on-data-science/machine-learning/computational-bayesian-stats/
 """
 )
+
+st.sidebar.markdown("""
+Made with ❤️ using matplotlib, numpy, scipy, and streamlit.
+
+Check out the source of this app [on GitHub][gh].
+
+Copyright 2020-present, Eric J. Ma.
+
+[gh]: https://github.com/ericmjl/what-are-probability-distributions
+""")
+
+
+
+st.markdown(
+"""
+If you made it this far, congratulations!
+
+If you liked this content and want to support my efforts creating
+programming-oriented educational material for data scientists,
+then please [send me a cup of coffee on Patreon][patreon]!
+
+[patreon]: https://www.patreon.com/ericmjl
+
+Meanwhile, I send out a programmer-oriented data science newsletter every month.
+If you'd like to receive a curated newsletter of tools, tips and techniques,
+come sign up at [TinyLetter][tinyletter]
+
+[tinyletter]: https://tinyletter.com/ericmjl
+"""
+)
+
+finished = st.button("Click me!")
+if finished:
+    st.balloons()
