@@ -106,7 +106,7 @@ changes the total probability of the data.
 """
 
 lower_quartile, upper_quartile = gaussian.dist.ppf([0.25, 0.75])
-minrange, maxrange = st.sidebar.slider("Range on the x-axis", min_value=minval, max_value=maxval, value=[lower_quartile, upper_quartile])
+minrange, maxrange = st.slider("Range on the x-axis", min_value=minval, max_value=maxval, value=[lower_quartile, upper_quartile])
 total_probability = gaussian.dist.cdf(maxrange) - gaussian.dist.cdf(minrange)
 
 xs = np.linspace(minrange, maxrange, 1000)
@@ -133,15 +133,14 @@ Yes, they are random number generators!
 Go ahead and request for a number of "draws" from your Gaussian!
 """)
 
-st.sidebar.markdown("-----")
-num_draws = st.sidebar.number_input("Number of draws", min_value=0, max_value=2000, value=0, step=20)
+num_draws = st.number_input("Number of draws", min_value=0, max_value=2000, value=0, step=20)
 draws = gaussian.draw(num_draws)
 
 
 fig3, ax3, minval, maxval = plot_gaussian(gaussian)
 ax3.vlines(x=draws, ymin=0, ymax=gaussian.pdf(draws), alpha=0.1)
 
-st.pyplot(fig)
+st.pyplot(fig3)
 
 st.markdown("""
 Notice how as you increase the number of draws,
@@ -169,9 +168,8 @@ data = [0.89, 0.81, 0.54, 0.50, -0.11, 1.19]
 st.write(data)
 
 st.markdown("And here's a Gaussian for you to play with. (See the sidebar.)")
-st.sidebar.markdown("## Configure the Gaussian to infer parameters")
-mu = st.sidebar.number_input("mu", min_value=-5., max_value=5., value=0., step=0.1)
-sigma = st.sidebar.number_input("sigma", min_value=0.1, max_value=10., value=1.0, step=0.1)
+mu = st.number_input("mu", min_value=-5., max_value=5., value=0., step=0.1)
+sigma = st.number_input("sigma", min_value=0.1, max_value=10., value=1.0, step=0.1)
 gaussian = Normal(mu, sigma)
 
 fig4, ax4 = plt.subplots()
@@ -186,7 +184,7 @@ ax4.vlines(x=data, ymin=0, ymax=likelihoods)
 ax4.set_ylim(0, max(ys) * 2)
 ax4.set_title(f"Total log-likelihood: {loglikes.sum():.3f}")
 
-st.pyplot(fig)
+st.pyplot(fig4)
 
 st.markdown(
 """
