@@ -71,24 +71,25 @@ gaussian = Normal(mu, sigma)
 import numpy as np
 import matplotlib.pyplot as plt
 
-fig, ax = plt.subplots()
 
+def plot_gaussian(gaussian):
+    fig, ax = plt.subplots()
 
-boundwidth = 0.001
-minval, maxval = gaussian.dist.ppf([boundwidth, 1 - boundwidth])
-xs = np.linspace(minval, maxval, 1000)
-ys = gaussian.pdf(xs)
-data = pd.DataFrame({"x": xs, "pdf": ys})
+    boundwidth = 0.001
+    minval, maxval = gaussian.dist.ppf([boundwidth, 1 - boundwidth])
+    xs = np.linspace(minval, maxval, 1000)
+    ys = gaussian.pdf(xs)
+    data = pd.DataFrame({"x": xs, "pdf": ys})
 
-ax = data.plot(x="x", y="pdf", ax=ax)
-ax.set_xlim(data["x"].min() - 1, data["x"].max() + 1)
-ax.set_ylim(0, data["pdf"].max() * 2)
-ax.set_ylabel("Probability density function")
-ax.set_title("Your bespoke Gaussian!")
+    ax = data.plot(x="x", y="pdf", ax=ax)
+    ax.set_xlim(data["x"].min() - 1, data["x"].max() + 1)
+    ax.set_ylim(0, data["pdf"].max() * 2)
+    ax.set_ylabel("Probability density function")
+    ax.set_title("Your bespoke Gaussian!")
+    return fig, ax, minval, maxval
 
+fig, ax, minval, maxval = plot_gaussian(gaussian)
 st.pyplot(fig)
-# chart
-# st.write(chart)
 
 
 """### Probability density function (and its logarithmic transform)
@@ -114,8 +115,11 @@ fill_data = pd.DataFrame({
     "pdf": gaussian.pdf(xs),
     "lowerbound": np.zeros(len(xs))
 })
-ax.fill_between(fill_data["x"], fill_data["lowerbound"], fill_data["pdf"], color="red")
-st.pyplot(fig)
+
+fig2, ax2, minval, maxval = plot_gaussian(gaussian)
+
+ax2.fill_between(fill_data["x"], fill_data["lowerbound"], fill_data["pdf"], color="red")
+st.pyplot(fig2)
 st.markdown(f"The total probability of that range of values is {total_probability:.2f}.")
 
 st.markdown("""
@@ -134,7 +138,8 @@ num_draws = st.sidebar.number_input("Number of draws", min_value=0, max_value=20
 draws = gaussian.draw(num_draws)
 
 
-ax.vlines(x=draws, ymin=0, ymax=gaussian.pdf(draws), alpha=0.1)
+fig3, ax3, minval, maxval = plot_gaussian(gaussian)
+ax3.vlines(x=draws, ymin=0, ymax=gaussian.pdf(draws), alpha=0.1)
 
 st.pyplot(fig)
 
@@ -169,17 +174,17 @@ mu = st.sidebar.number_input("mu", min_value=-5., max_value=5., value=0., step=0
 sigma = st.sidebar.number_input("sigma", min_value=0.1, max_value=10., value=1.0, step=0.1)
 gaussian = Normal(mu, sigma)
 
-fig, ax = plt.subplots()
+fig4, ax4 = plt.subplots()
 boundwidth = 0.001
 minval, maxval = gaussian.dist.ppf([boundwidth, 1 - boundwidth])
 xs = np.linspace(minval, maxval, 1000)
 ys = gaussian.pdf(xs)
-ax.plot(xs, ys)
+ax4.plot(xs, ys)
 likelihoods = gaussian.pdf(data)
 loglikes = gaussian.logpdf(data)
-ax.vlines(x=data, ymin=0, ymax=likelihoods)
-ax.set_ylim(0, max(ys) * 2)
-ax.set_title(f"Total log-likelihood: {loglikes.sum():.3f}")
+ax4.vlines(x=data, ymin=0, ymax=likelihoods)
+ax4.set_ylim(0, max(ys) * 2)
+ax4.set_title(f"Total log-likelihood: {loglikes.sum():.3f}")
 
 st.pyplot(fig)
 
