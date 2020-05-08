@@ -116,9 +116,11 @@ with st.echo():
             return self.dist.rvs(n)
 
 st.markdown("""
-Enough said!
+## Visual Exploration
 
-Go ahead and configure a Gaussian using the widgets on the sidebar!
+Enough said! Let's explore these ideas in a visual fashion now.
+
+First off, go ahead and configure a Gaussian using the widgets on the sidebar!
 """)
 
 st.sidebar.markdown("## Configure your gaussian")
@@ -174,7 +176,7 @@ lower_quartile, upper_quartile = gaussian.dist.ppf([0.25, 0.75])
 minrange, maxrange = st.slider("Range on the x-axis", min_value=minval, max_value=maxval, value=[lower_quartile, upper_quartile])
 total_probability = gaussian.dist.cdf(maxrange) - gaussian.dist.cdf(minrange)
 
-xs = np.linspace(minrange, maxrange, 1000)
+xs = np.linspace(minrange, maxrange, 1001)
 fill_data = pd.DataFrame({
     "x": xs,
     "pdf": gaussian.pdf(xs),
@@ -182,11 +184,10 @@ fill_data = pd.DataFrame({
 })
 
 fig2, ax2, minval, maxval = plot_gaussian(gaussian)
-ax2.set_title("Probability of a range")
+ax2.set_title(f"Total Probability: {total_probability:.2f}")
 
 ax2.fill_between(fill_data["x"], fill_data["lowerbound"], fill_data["pdf"], color="red")
 st.pyplot(fig2)
-st.markdown(f"The total probability of that range of values is {total_probability:.2f}.")
 
 st.markdown(f"""
 On the other hand, we also use the probability density function
@@ -324,7 +325,12 @@ check out [this essay that I wrote][compbayes].
 )
 
 st.sidebar.markdown("""
-Made with ❤️ using matplotlib, numpy, scipy, and streamlit.
+Made with ❤️ using [matplotlib][mpl], [numpy][np], [scipy stats library][sp], and [streamlit][st].
+
+[mpl]: https://matplotlib.org/
+[np]: https://numpy.org/doc/
+[sp]: https://scipy.github.io/devdocs/stats.html#module-scipy.stats
+[st]: https://docs.streamlit.io/
 
 Check out the source of this app [on GitHub][gh].
 
