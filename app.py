@@ -186,8 +186,12 @@ st.pyplot(fig2)
 st.markdown(f"The total probability of that range of values is {total_probability:.2f}.")
 
 st.markdown(f"""
-On the other hand, we sometimes use the probability density function
+On the other hand, we also use the probability density function
 as a way of expressing "likelihood".
+What's "likelihood"?
+Basically, it's the "credibility points" idea
+associated with a single number on the x-axis.
+The higher the likelihood, the greater the amount of credibility points.
 
 Likelihood, as expressed by the probability density function,
 is not the **area** under the curve,
@@ -206,7 +210,7 @@ ax2.set_title(f"Likelihood: {like:.2f}")
 st.pyplot(fig2)
 
 st.markdown("""
-This hopefully makes clear to you that we can never really speak of
+These two demos hopefully make clear to you that we can never really speak of
 the "probability of a number" in a continuous distribution.
 However, we can talk about the "likelihood of a number".
 
