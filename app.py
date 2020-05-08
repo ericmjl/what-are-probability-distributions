@@ -143,6 +143,7 @@ def plot_gaussian(gaussian):
     ax.set_ylim(0, data["pdf"].max() * 2)
     ax.set_ylabel("Probability density function")
     ax.set_title("Your bespoke Gaussian!")
+    ax.set_xlabel("support (or 'x')")
     return fig, ax, minval, maxval
 
 fig, ax, minval, maxval = plot_gaussian(gaussian)
