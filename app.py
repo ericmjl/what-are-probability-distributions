@@ -359,6 +359,12 @@ come sign up at [TinyLetter][tinyletter]
 """
 )
 
+st.sidebar.markdown("""
+Support me on [Patreon][patreon]!
+
+[patreon]: https://patreon.com/ericmjl
+""")
+
 finished = st.button("Click me!")
 if finished:
     st.balloons()
