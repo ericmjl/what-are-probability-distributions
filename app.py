@@ -25,6 +25,46 @@ and we can do a number of things with it.
 
 Let's think about it in concrete terms
 by studying the **Normal** or **Gaussian** distribution.
+To keep the pedagogy clean, I'm going to borrow some machinery
+from the SciPy stats library.
+""")
+
+st.markdown("""
+### Initialization
+
+The Normal distribution is canonically initialized with two parameters,
+`mu` and `sigma`.
+`mu` controls the "central tendency" of the distribution,
+i.e. where on the number line it is centered on,
+while `sigma` controls the "spread" of the distribution,
+i.e. how wide the Normal distribution is.
+""")
+
+with st.echo():
+    from scipy.stats import norm
+    class Normal:
+        def __init__(self, mu, sigma):
+            self.mu = mu
+            self.sigma = sigma
+            self.dist = norm(loc=mu, scale=sigma)
+
+st.markdown("""
+## Probability Density Function
+
+A probability distribution also contains
+one function called the "probability density/mass function"
+for continuous and discrete distributions respectively.
+
+This function has a characteristic shape,
+such as the bell shape for a Gaussian,
+and is defined over the number line for all valid values of the distribution
+(also known as the support).
+
+By definition, __area__ under the PDF/PMF must sum to 1.
+
+For example, the Gaussian has "support" from $-\infty$ to $+\infty$,
+the distribution is valid for values of from negative to positive infinity.
+The `logpdf` is nothing more than the log transform of the `pdf`.
 """)
 
 with st.echo():
@@ -43,23 +83,40 @@ with st.echo():
             """Evaluate log likelihood of data `x` given the distribution."""
             return self.dist.logpdf(x)
 
+st.markdown("""
+## Drawing Numbers
+
+The final piece we'll introduce is the ability to draw numbers from the distribution.
+
+More pedantically, we're drawing numbers from the _support_ of the distribution,
+i.e. only values that are valid for the distribution.
+""")
+
+
+with st.echo():
+    from scipy.stats import norm
+    class Normal:
+        def __init__(self, mu, sigma):
+            self.mu = mu
+            self.sigma = sigma
+            self.dist = norm(loc=mu, scale=sigma)
+
+        def pdf(self, x):
+            """Evalute likelihood of data `x` given the distribution."""
+            return self.dist.pdf(x)
+
+        def logpdf(self, x):
+            """Evaluate log likelihood of data `x` given the distribution."""
+            return self.dist.logpdf(x)
+
         def draw(self, n):
-            """Draw `n` values from the distribution."""
+            """Draw n values from the distribution."""
             return self.dist.rvs(n)
 
 st.markdown("""
-Let's unpack a bit of stuff here.
+Enough said!
 
-### Initialization
-
-The Normal distribution is canonically initialized with two parameters,
-`mu` and `sigma`.
-`mu` controls the "central tendency" of the distribution,
-i.e. where on the number line it is centered on,
-while `sigma` controls the "spread" of the distribution,
-i.e. how wide the Normal distribution is.
-
-Go ahead and configure an initialization of a Gaussian, using the sidebar!
+Go ahead and configure a Gaussian using the widgets on the sidebar!
 """)
 
 st.sidebar.markdown("## Configure your gaussian")
@@ -92,19 +149,22 @@ fig, ax, minval, maxval = plot_gaussian(gaussian)
 st.pyplot(fig)
 
 
-"""### Probability density function (and its logarithmic transform)
+"""### Probability and Likelihood
 
-The Normal distribution has a probability density function.
+As mentioned above,
+the Normal distribution has a probability density function.
 That's the blue curve you see in the plot.
 By definition,
-the area under the probability density function sums to one,
+the area under the probability density/mass function sums to one,
 and so for a continuous distribution like the Gaussian,
-"probability" is strictly defined _only_ for ranges.
+"probability" is strictly defined _only_ for ranges,
+and not for individual values.
 
 Go ahead and calculate the total probability
 for a range of x-values.
 In particular, see how changing the width
 changes the total probability of the x-values.
+(In particular, bring the width to 0!)
 """
 
 lower_quartile, upper_quartile = gaussian.dist.ppf([0.25, 0.75])
@@ -119,12 +179,37 @@ fill_data = pd.DataFrame({
 })
 
 fig2, ax2, minval, maxval = plot_gaussian(gaussian)
+ax2.set_title("Probability of a range")
 
 ax2.fill_between(fill_data["x"], fill_data["lowerbound"], fill_data["pdf"], color="red")
 st.pyplot(fig2)
 st.markdown(f"The total probability of that range of values is {total_probability:.2f}.")
 
+st.markdown(f"""
+On the other hand, we sometimes use the probability density function
+as a way of expressing "likelihood".
+
+Likelihood, as expressed by the probability density function,
+is not the **area** under the curve,
+but the **height** of the curve.
+As such, we can talk about the **likelihood of a single point**.
+Go try it out below!
+""")
+
+xs = np.linspace(minrange, maxrange, 1000)
+
+fig2, ax2, minval, maxval = plot_gaussian(gaussian)
+x_value = st.slider("Pick a value x to caclualte its likelihood:", min_value=minval, max_value=maxval, value=(minval + maxval) / 2, step=(maxval - minval)/100)
+like = gaussian.pdf(x_value)
+ax2.vlines(x=x_value, ymin=0, ymax=like, color="red")
+ax2.set_title(f"Likelihood: {like:.2f}")
+st.pyplot(fig2)
+
 st.markdown("""
+This hopefully makes clear to you that we can never really speak of
+the "probability of a number" in a continuous distribution.
+However, we can talk about the "likelihood of a number".
+
 ### Drawing numbers from a probability distribution
 
 Turns out, one other thing you can do with probability distributions
@@ -138,13 +223,10 @@ all we have to do is call on the `.draw()` method:
 xs = distribution.draw(1000)
 ```
 
-If you study the implementation above,
-underneath the hood, we simply wrap SciPy's distributions library for convenience.
-
 Go ahead and request for a number of "draws" from your Gaussian!
 """)
 
-num_draws = st.number_input("Number of draws", min_value=0, max_value=2000, value=0, step=20)
+num_draws = st.number_input("Number of draws", min_value=0, max_value=2000, value=0, step=250)
 draws = gaussian.draw(num_draws)
 
 fig3, ax3, minval, maxval = plot_gaussian(gaussian)
