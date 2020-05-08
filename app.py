@@ -55,15 +55,17 @@ A probability distribution also contains
 one function called the "probability density/mass function"
 for continuous and discrete distributions respectively.
 
+By definition, __area__ under the PDF/PMF must sum to 1.
+
 This function has a characteristic shape,
 such as the bell shape for a Gaussian,
 and is defined over the number line for all valid values of the distribution
 (also known as the support).
 
-By definition, __area__ under the PDF/PMF must sum to 1.
-
 For example, the Gaussian has "support" from $-\infty$ to $+\infty$,
-the distribution is valid for values of from negative to positive infinity.
+so the distribution is valid
+for values of from negative to positive infinity.
+
 The `logpdf` is nothing more than the log transform of the `pdf`.
 """)
 
