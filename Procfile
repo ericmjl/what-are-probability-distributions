@@ -1,2 +1,2 @@
 # Procfile
-web: bash setup.sh && streamlit run app.py
+web: bash setup.sh && echo ~/.streamlit/config.toml && streamlit run app.py
